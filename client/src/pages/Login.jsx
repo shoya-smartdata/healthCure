@@ -17,9 +17,10 @@ function Login() {
       
       // Store token in localStorage
       localStorage.setItem('token', response.token);
+      localStorage.setItem('user', response.user);
       
       // Redirect to appointments page
-      navigate("/appointments"); // Redirect on success
+      navigate("/bookappointment"); // Redirect on success
     } catch (error) {
       console.error("Login failed:", error); // Debug: check what went wrong
     }

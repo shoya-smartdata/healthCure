@@ -19,13 +19,15 @@ function Appointments() {
     const fetchAppointments = async () => {
       try {
         // Replace with your API endpoint
-        const response = await axios.get('https://yourapi.com/appointments', {
+        const response = await axios.get('http://localhost:3030/api/appointment/getallappointments', {
           headers: {
             Authorization: `Bearer ${token}`, // Include token for authentication
           },
         });
+        console.log("yeh raha ", response);
         
-        setAppointments(response.data);
+        
+        setAppointments(response);
       } catch (error) {
         console.error('Error fetching appointments:', error);
       }

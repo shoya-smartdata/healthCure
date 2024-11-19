@@ -3,10 +3,11 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
-import Appointments from './pages/Appointments';
+
 
 import ProtectedRoute from './middleware/Routes';
 import Register from './pages/Register';
+import BookAppointment from './pages/Bookappointment';
 // Create a wrapper component to protect routes
 
 function App() {
@@ -19,10 +20,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={ <Register/>} />
         <Route
-          path="/appointments"
+          path="/bookappointment"
           element={
             <ProtectedRoute>
-              <Appointments />
+              <BookAppointment />
             </ProtectedRoute>
           }
         />

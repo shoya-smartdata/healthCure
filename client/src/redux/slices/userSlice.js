@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const loginUser = createAsyncThunk('user/login', async ({ email, password }) => {
+export const loginUser = createAsyncThunk('api/user/login', async ({ email, password }) => {
   const response = await axios.post('/api/user/login', { email, password });
   // Assuming the response contains the token in the format { token: 'your-jwt-token' }
   return response.data;

@@ -1,88 +1,117 @@
 const Appointment = require("../models/appointmentModel");
 const Notification = require("../models/notificationModel");
 const User = require("../models/userModel");
+const Doctor = require("../models/doctorModel"); // Assuming Doctor model exists
+const { Op } = require("sequelize");
 
-const getallappointments = async (req, res) => {
+const getAllAppointments = async (req, res) => {
   try {
-    const keyword = req.query.search
+    const searchKeyword = req.query.search;
+
+    const whereClause = searchKeyword
       ? {
-          $or: [{ userId: req.query.search }, { doctorId: req.query.search }],
+          [Op.or]: [
+            { userId: searchKeyword }, // Matches userId
+            { doctorId: searchKeyword }, // Matches doctorId
+          ],
         }
       : {};
 
-    const appointments = await Appointment.find(keyword)
-      .populate("doctorId")
-      .populate("userId");
-    return res.send(appointments);
+    const appointments = await Appointment.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: Doctor, // Include associated doctor data
+          as: "doctor", // Make sure `as` matches your association alias
+        },
+        {
+          model: User, // Include associated user data
+          as: "user", // Make sure `as` matches your association alias
+        },
+      ],
+    });
+
+    return res.status(200).json(appointments);
   } catch (error) {
-    res.status(500).send("Unable to get apponintments");
+    console.error(error); // Log the error for debugging
+    res.status(500).send("Unable to get appointments");
   }
 };
 
 const bookappointment = async (req, res) => {
   try {
-    const appointment = await Appointment({
-      date: req.body.date,
-      time: req.body.time,
-      doctorId: req.body.doctorId,
-      userId: req.locals,
+    // Assuming req.locals holds the current user's ID
+    const userId = req.locals;
+    const { doctorId, doctorname, date, time } = req.body;
+
+    // Create a new appointment
+    const appointment = await Appointment.create({
+      date,
+      time,
+      doctorId,
+      userId,
     });
 
-    const usernotification = Notification({
-      userId: req.locals,
-      content: `You booked an appointment with Dr. ${req.body.doctorname} for ${req.body.date} ${req.body.time}`,
+    // Send notification to the user
+    const userNotification = await Notification.create({
+      userId,
+      content: `You booked an appointment with Dr. ${doctorname} for ${date} at ${time}`,
     });
 
-    await usernotification.save();
+    // Get the user data
+    const user = await User.findByPk(userId);
 
-    const user = await User.findById(req.locals);
-
-    const doctornotification = Notification({
-      userId: req.body.doctorId,
-      content: `You have an appointment with ${user.firstname} ${user.lastname} on ${req.body.date} at ${req.body.time}`,
+    // Send notification to the doctor
+    const doctorNotification = await Notification.create({
+      userId: doctorId,
+      content: `You have an appointment with ${user.firstname} ${user.lastname} on ${date} at ${time}`,
     });
 
-    await doctornotification.save();
-
-    const result = await appointment.save();
-    return res.status(201).send(result);
+    return res.status(201).json(appointment);
   } catch (error) {
-    console.log("error", error);
+    console.error("Error booking appointment:", error);
     res.status(500).send("Unable to book appointment");
   }
 };
 
 const completed = async (req, res) => {
   try {
-    const alreadyFound = await Appointment.findOneAndUpdate(
-      { _id: req.body.appointid },
-      { status: "Completed" }
-    );
+    const { appointid, doctorId, doctorname } = req.body;
+    const userId = req.locals;
 
-    const usernotification = Notification({
-      userId: req.locals,
-      content: `Your appointment with ${req.body.doctorname} has been completed`,
+    // Update the appointment status to 'Completed'
+    const appointment = await Appointment.findByPk(appointid);
+
+    if (!appointment) {
+      return res.status(404).send("Appointment not found");
+    }
+
+    await appointment.update({ status: "Completed" });
+
+    // Send notification to the user
+    const userNotification = await Notification.create({
+      userId,
+      content: `Your appointment with Dr. ${doctorname} has been completed`,
     });
 
-    await usernotification.save();
+    // Get the user data
+    const user = await User.findByPk(userId);
 
-    const user = await User.findById(req.locals);
-
-    const doctornotification = Notification({
-      userId: req.body.doctorId,
+    // Send notification to the doctor
+    const doctorNotification = await Notification.create({
+      userId: doctorId,
       content: `Your appointment with ${user.firstname} ${user.lastname} has been completed`,
     });
 
-    await doctornotification.save();
-
-    return res.status(201).send("Appointment completed");
+    return res.status(200).send("Appointment completed");
   } catch (error) {
+    console.error("Error completing appointment:", error);
     res.status(500).send("Unable to complete appointment");
   }
 };
 
 module.exports = {
-  getallappointments,
+  getAllAppointments,
   bookappointment,
   completed,
 };

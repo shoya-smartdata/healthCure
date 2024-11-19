@@ -7,7 +7,7 @@ const appointRouter = express.Router();
 appointRouter.get(
   "/getallappointments",
   auth,
-  appointmentController.getallappointments
+  appointmentController.getAllAppointments
 );
 
 appointRouter.post(
