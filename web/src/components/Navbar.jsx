@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="bg-blue-600 text-white py-4 px-6 flex justify-between items-center">
+    <nav className="bg-indigo-600 text-white py-4 px-6 flex justify-between drop-shadow-lg fixed w-full top-0 left-0 items-center">
       {/* Left Links */}
-      <div className="flex gap-4 text-sm sm:text-base">
+      <div className="flex drop-shadow-lg gap-4 text-sm sm:text-base">
         <Link to="/" className="hover:underline">
           Home
         </Link>

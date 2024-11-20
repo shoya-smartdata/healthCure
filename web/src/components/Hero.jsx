@@ -1,5 +1,6 @@
 import React from "react";
 import AboutUs from "./AboutUs";
+import HomeCounts from "./HomeCountes";
 
 
 const Hero = () => {
@@ -39,9 +40,13 @@ const Hero = () => {
   </div>
 </section>
 
-    {/* about us page code yahan likhna hai  */}
+    <section className="bg-gray-100">
+      {/* about us page code yahan likhna hai  */}
     <AboutUs/>
-    
+     {/* count here  */}
+
+     <HomeCounts />
+    </section>
     </>
     
   );

@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 const Notification = require("../models/notificationModel");
 const Appointment = require("../models/appointmentModel");
 
+
 const getalldoctors = async (req, res) => {
   try {
     let docs;
@@ -14,8 +15,7 @@ const getalldoctors = async (req, res) => {
       where: { isDoctor: true, ...condition },
       include: [
         {
-          model: User,
-          as: 'user', // Adjust to match your alias in the association
+          model: User, // No alias here
         }
       ]
     });
@@ -27,6 +27,7 @@ const getalldoctors = async (req, res) => {
   }
 };
 
+
 const getnotdoctors = async (req, res) => {
   try {
     const docs = await Doctor.findAll({
@@ -34,7 +35,7 @@ const getnotdoctors = async (req, res) => {
       include: [
         {
           model: User,
-          as: 'user', // Adjust to match your alias in the association
+          as: 'user', 
         }
       ]
     });

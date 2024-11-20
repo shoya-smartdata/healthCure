@@ -31,7 +31,7 @@ const getallusers = async (req, res) => {
       },
       attributes: { exclude: ["password"] }, // Exclude password field
     });
-
+   
     return res.status(200).json(users);
   } catch (error) {
     console.error(error);
@@ -39,34 +39,45 @@ const getallusers = async (req, res) => {
   }
 };
 
+ // Replace with your actual User model path
+
 const login = async (req, res) => {
   try {
-    const emailPresent = await User.findOne({
-      where: { email: req.body.email },
-    });
+    const user = await User.findOne({ where: { email: req.body.email } });
 
-    if (!emailPresent) {
-      return res.status(400).json({ message: "Incorrect credentials" });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const verifyPass = await bcrypt.compare(req.body.password, emailPresent.password);
+    const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
 
-    if (!verifyPass) {
-      return res.status(400).json({ message: "Incorrect credentials" });
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid email or password" });
     }
- 
+
     const token = jwt.sign(
-      { userId: emailPresent.id, isAdmin: emailPresent.isAdmin },
+      { userId: user.id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
-
-    return res.status(200).json({ msg: "User logged in successfully", token });
+  
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        isAdmin: user.isAdmin,
+      },
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Unable to login user" });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
 
 const register = async (req, res) => {
   try {

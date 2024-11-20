@@ -7,7 +7,7 @@ const Layout = () => {
   return (
     <>
       <Navbar />
-      <main className="min-h-[calc(100vh-64px-64px)]">
+      <main className=" bg-gray-100  min-h-[calc(100vh-64px-64px)] mt-16">
         <Outlet />
       </main>
       <Footer />

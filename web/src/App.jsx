@@ -6,6 +6,7 @@ import Admin from "./middleware/route/Admin";
 import React, { lazy, Suspense } from "react";
 import Layout from "./components/Layout"; // Import Layout
 import Loading from "./components/Loading";
+import { AuthProvider } from "./middleware/AuthContext";
 
 // Lazy-loaded pages
 const Home = lazy(() => import("./pages/Home"));
@@ -21,14 +22,14 @@ const Register = lazy(() => import("./pages/Register"));
 
 function App() {
   return (
+    <AuthProvider>
     <Router>
       <Toaster />
    
       <Suspense fallback={<Loading />}>
   <Routes>
     {/* Public Routes */}
-    <Route path="/login" element={<Public><Login /></Public>} />
-    <Route path="/register" element={<Public><Register /></Public>} />
+    
     
     {/* Layout-Based Routes */}
     <Route element={<Layout />}>
@@ -98,14 +99,20 @@ function App() {
           </Protected>
         }
       />
+
+{/* login and register  */}
+<Route path="/login" element={<Public><Login /></Public>} />
+    <Route path="/register" element={<Public><Register /></Public>} />
+  {/* Fallback Route */}
+  <Route path="*" element={<Error />} />
     </Route>
 
-    {/* Fallback Route */}
-    <Route path="*" element={<Error />} />
+  
   </Routes>
 </Suspense>
 
     </Router>
+    </AuthProvider>
   );
 }
 

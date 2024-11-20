@@ -56,7 +56,7 @@ const Register = () => {
   };
 
   return (
-    <Layout>
+ 
       <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-xl mt-8">
         <h2 className="text-xl font-semibold text-center text-blue-600 mb-6">Create Your Account</h2>
 
@@ -191,7 +191,7 @@ const Register = () => {
           </div>
         </form>
       </div>
-    </Layout>
+    
   );
 };
 
