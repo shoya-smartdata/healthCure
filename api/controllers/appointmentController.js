@@ -48,7 +48,10 @@ const bookappointment = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
-
+    //
+    const doctorCheck = await Doctor.findAll();
+    console.log(doctorCheck);
+    
     // Create a new appointment
     const appointment = await Appointment.create({
       date,

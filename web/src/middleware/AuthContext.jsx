@@ -1,41 +1,53 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode"; // Ensure you install jwt-decode via npm install jwt-decode
+import {jwtDecode} from "jwt-decode"; // Corrected the import
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  // useEffect(() => {
+  //   console.log("AuthProvider useEffect triggered");
+  //   const storedToken = localStorage.getItem("token");
+  
+  //   if (storedToken) {
+  //     try {
+  //       const decodedUser = jwtDecode(storedToken);
+  //       console.log("Decoded User in useEffect:", decodedUser);
+  
+  //       setUser(decodedUser);
+  //     } catch (error) {
+  //       console.error("Error decoding token:", error);
+  //     }
+  //   }
+  // }, []);
+  
+  //
   useEffect(() => {
-    // Get the stored token from localStorage
-    const storedToken = localStorage.getItem("token");
-
-    if (storedToken) {
+    const token = localStorage.getItem("token");
+    if (token) {
       try {
-        // Decode the token to extract user information
-        const decodedUser = jwtDecode(storedToken);
+        const decodedUser = jwtDecode(token);
+        console.log("Decoded User:", decodedUser); 
         setUser(decodedUser);
       } catch (error) {
-        console.error("Error decoding token from localStorage:", error);
-        localStorage.removeItem("token"); // Clear invalid token
+        console.error("Error decoding token:", error);
       }
     }
   }, []);
-
-  const login = (token, userData) => {
+  
+  const login = (token) => {
     try {
-      // Decode the token to extract user information
       const decodedUser = jwtDecode(token);
-
-      // Store the token in localStorage
-      localStorage.setItem("token", token);
-
-      // Update the user state with decoded user data
-      setUser({ ...decodedUser, ...userData }); // Combining user data from backend if needed
+      localStorage.setItem("token", token); // Store token
+      localStorage.setItem("userRole", JSON.stringify({ isAdmin: decodedUser.isAdmin, isDoctor: decodedUser.isDoctor })); // Store roles
+      setUser(decodedUser);
     } catch (error) {
       console.error("Error decoding login token:", error);
     }
   };
+  
+  
 
   const logout = () => {
     localStorage.removeItem("token"); // Clear token from localStorage

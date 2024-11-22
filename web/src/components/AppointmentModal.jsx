@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { bookappointment } from "../services/userService";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -6,32 +6,40 @@ import { useNavigate } from "react-router-dom";
 const AppointmentModal = ({ doctor, onClose, onBook }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const nevigate = useNavigate();
-  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please log in to book an appointment.");
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Replace with logged-in user's ID if dynamic
       const response = await bookappointment({
         date,
         time,
-        doctorId: doctor.User.id, // Pass dynamic doctor ID
-        userId: doctor.User.userId
+        doctorId: doctor.User.id,
+        userId: doctor.User.userId,
       });
       toast.success("Appointment booked!");
-      nevigate('/appointments')
+      navigate("/appointments");
       onBook(); // Trigger parent callback
     } catch (error) {
       console.error("Error response details:", error.response || error.message);
       toast.error(error?.response?.data?.message || "Unable to book appointment.");
     }
   };
-  
-  
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4">Book Appointment with Dr. {doctor.User.firstname} {doctor.User.lastname}</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          Book Appointment with Dr. {doctor.User.firstname} {doctor.User.lastname}
+        </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-semibold text-gray-700">Date</label>

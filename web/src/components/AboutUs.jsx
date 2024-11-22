@@ -1,6 +1,8 @@
 import React from "react";
 
+
 const AboutUs = () => {
+
   return (
     <section className="container-fluid mx-auto px-4 py-8 bg-gray-100">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">About Us</h2>
