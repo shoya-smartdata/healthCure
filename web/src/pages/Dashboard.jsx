@@ -1,23 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaUserAlt, FaStethoscope, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { getalldoctorsreq } from '../services/doctorService';
 
 const Dashboard = () => {
-  // Static Data for Doctor Applications
-  const doctorApplications = [
-    { id: 1, name: 'Dr. John Doe', specialization: 'Cardiologist', status: 'Pending' },
-    { id: 2, name: 'Dr. Jane Smith', specialization: 'Dermatologist', status: 'Pending' },
-    { id: 3, name: 'Dr. Adam Brown', specialization: 'Neurologist', status: 'Pending' },
-  ];
+  // State to handle doctor application data
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
-  // Static Data for Users
-  const users = [
-    { id: 1, username: 'john_doe', email: 'john@example.com' },
-    { id: 2, username: 'jane_smith', email: 'jane@example.com' },
-    { id: 3, username: 'adam_brown', email: 'adam@example.com' },
-  ];
+  // Fetch doctor applications on component mount
+  useEffect(() => {
+    const fetchDoctorApplications = async () => {
+      try {
+        const data = await getalldoctorsreq();
+        console.log('aa rah ahai ', data);
+        setApplications(data);
+      } catch (error) {
+        console.error('Error fetching doctor applications:', error);
+      } finally {
+        setLoading(false); // Stop loading once data is fetched
+      }
+    };
 
-  // State to handle doctor application acceptance/rejection
-  const [applications, setApplications] = useState(doctorApplications);
+    fetchDoctorApplications();
+  }, []);
 
   // Function to accept a doctor application
   const acceptApplication = (id) => {
@@ -49,14 +54,13 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-y-auto">
-        {/* Header */}
-      
-
         {/* Doctor Applications Section */}
         <section className="mb-12">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6">Doctor Applications</h2>
           <div className="grid grid-cols-3 gap-6">
-            {applications.length === 0 ? (
+            {loading ? (
+              <p className="text-gray-500 text-lg">Loading applications...</p>
+            ) : applications.length === 0 ? (
               <p className="text-gray-500 text-lg">No applications to review.</p>
             ) : (
               applications.map((application) => (
@@ -67,13 +71,19 @@ const Dashboard = () => {
                   <div className="flex items-center space-x-4 mb-4">
                     <FaUserAlt className="text-4xl text-blue-600" />
                     <div>
-                      <h3 className="text-2xl font-semibold text-gray-800">{application.name}</h3>
+                      <h3 className="text-2xl font-semibold text-gray-800">
+                        {application.User.firstname} {application.User.lastname}
+                      </h3>
                       <p className="text-lg text-gray-600">{application.specialization}</p>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 mb-4">Status: {application.status}</div>
+                  <div className="text-sm text-gray-500 mb-4">Status: {application.User.status}</div>
+                  <div className="text-sm text-gray-500 mb-4">Experience: {application.experience} years</div>
+                  <div className="text-sm text-gray-500 mb-4">Fees: ₹{application.fees}</div>
+                  <div className="text-sm text-gray-500 mb-4">Mobile: {application.User.mobile}</div>
+                  <div className="text-sm text-gray-500 mb-4">Email: {application.User.email}</div>
                   <div className="flex space-x-4">
-                    {application.status === 'Pending' ? (
+                    {application.User.status === 'pending' ? (
                       <>
                         <button
                           onClick={() => acceptApplication(application.id)}
@@ -112,10 +122,10 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} className="border-b hover:bg-gray-50 transition duration-300">
-                    <td className="py-3 px-6 text-gray-800">{user.username}</td>
-                    <td className="py-3 px-6 text-gray-800">{user.email}</td>
+                {applications.map((application) => (
+                  <tr key={application.User.id} className="border-b hover:bg-gray-50 transition duration-300">
+                    <td className="py-3 px-6 text-gray-800">{application.User.firstname} {application.User.lastname}</td>
+                    <td className="py-3 px-6 text-gray-800">{application.User.email}</td>
                   </tr>
                 ))}
               </tbody>

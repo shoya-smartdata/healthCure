@@ -39,6 +39,8 @@ export const AuthProvider = ({ children }) => {
   const login = (token) => {
     try {
       const decodedUser = jwtDecode(token);
+      console.log(decodedUser, "decodede token   velue ");
+      
       localStorage.setItem("token", token); // Store token
       localStorage.setItem("userRole", JSON.stringify({ isAdmin: decodedUser.isAdmin, isDoctor: decodedUser.isDoctor })); // Store roles
       setUser(decodedUser);

@@ -1,11 +1,12 @@
 import React from "react";
-
+import { useTheme } from "../middleware/ThemeContext"; // Import the theme context
 
 const AboutUs = () => {
+  const { theme } = useTheme(); // Get the current theme
 
   return (
-    <section className="container-fluid mx-auto px-4 py-8 bg-gray-100">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">About Us</h2>
+    <section className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} container-fluid mx-auto px-4 py-8`}>
+      <h2 className={`text-3xl font-bold text-center ${theme === 'dark' ? 'text-white' : 'text-gray-800'} mb-8`}>About Us</h2>
       <div className="flex flex-col lg:flex-row items-center gap-8">
         {/* Image Section */}
         <div className="flex-1">
@@ -16,7 +17,7 @@ const AboutUs = () => {
           />
         </div>
         {/* Content Section */}
-        <div className="flex-1 text-gray-700">
+        <div className={`flex-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
           <p className="text-lg leading-relaxed">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
             tenetur doloremque molestias repellat minus asperiores in aperiam

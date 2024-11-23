@@ -1,43 +1,42 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import { getalldoctors } from "../services/doctorService";
-import AppointmentModal from "../components/AppointmentModal"; // Import the modal component
+import AppointmentModal from "../components/AppointmentModal";
+import { useTheme } from "../middleware/ThemeContext";
 
 const Doctors = () => {
-  const [doctors, setDoctors] = useState([]); // Placeholder for fetched data
-  const [loading, setLoading] = useState(false); // Local loading state
-  const [selectedDoctor, setSelectedDoctor] = useState(null); // State to track the selected doctor
-  const [showModal, setShowModal] = useState(false); // State to toggle the modal
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const { theme } = useTheme(); // Access current theme
 
   useEffect(() => {
-    // Fetching doctors data when the component mounts
     const fetchAllDocs = async () => {
-      setLoading(true); // Set loading to true before making API call
+      setLoading(true);
       try {
         const doctorsData = await getalldoctors();
-        console.log(doctorsData);
-        setDoctors(doctorsData); // Update state with fetched data
+        setDoctors(doctorsData);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       } finally {
-        setLoading(false); // Set loading to false after the API call
+        setLoading(false);
       }
     };
 
     fetchAllDocs();
-  }, []); // Empty dependency array ensures this effect runs only once when the component mounts
-
-  const handleBookAppointment = (doctorId, doctorname, date, time) => {
-    // Handle booking logic here (API call, etc.)
-    console.log(`Appointment booked with Dr. ${doctorname} on ${date} at ${time}`);
-  };
+  }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {loading && <Loading />} {/* Show loading spinner while data is fetching */}
+    <div
+      className={`container mx-auto px-4 py-8 transition-colors duration-300 ${
+        theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"
+      }`}
+    >
+      {loading && <Loading />}
       {!loading && (
         <section>
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          <h2 className="text-3xl font-bold text-center mb-6">
             Our Doctors
           </h2>
           {doctors.length > 0 ? (
@@ -45,43 +44,44 @@ const Doctors = () => {
               {doctors.map((doctor) => (
                 <div
                   key={doctor.id}
-                  className="bg-white shadow-lg rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300"
+                  className={`shadow-lg rounded-lg p-6 text-center transition-shadow duration-300 ${
+                    theme === "dark"
+                      ? "bg-gray-800 text-gray-100 hover:shadow-gray-700"
+                      : "bg-white text-gray-900 hover:shadow-gray-400"
+                  }`}
                 >
-                  {/* Profile Picture */}
                   <img
                     src={doctor.User.pic}
                     alt={`${doctor.User.firstname} ${doctor.User.lastname}`}
-                    className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-2 border-indigo-600"
+                    className={`w-24 h-24 rounded-full mx-auto mb-4 object-cover border-2 ${
+                      theme === "dark" ? "border-teal-400" : "border-indigo-600"
+                    }`}
                   />
-                  {/* Doctor's Full Name */}
-                  <h3 className="text-2xl font-semibold mb-2 text-gray-900">
+                  <h3 className="text-2xl font-semibold mb-2">
                     {doctor.User.firstname} {doctor.User.lastname}
                   </h3>
-                  {/* Specialization */}
-                  <p className="text-gray-600 mb-2">{doctor.specialization}</p>
-                  {/* Experience */}
-                  <p className="text-gray-600 mb-2">
-                    <strong>Experience:</strong> {doctor.experience} years
+                  <p className="text-sm mb-1">
+                    Specialization: {doctor.specialization}
                   </p>
-                  {/* Fees */}
-                  <p className="text-gray-600 mb-2">
-                    <strong>Fees:</strong> ₹{doctor.fees}
+                  <p className="text-sm mb-1">
+                    Experience: {doctor.experience} years
                   </p>
-                  {/* Status */}
-                  <p
-                    className={`text-sm font-medium ${
-                      doctor.status === "approved" ? "text-green-500" : "text-yellow-400"
-                    }`}
-                  >
-                    {doctor.status === "approved" ? "Approved" : "Pending"}
+                  <p className="text-sm mb-1">
+                    Contact: {doctor.contact}
                   </p>
-                  {/* Book Appointment Button */}
+                  <p className="text-sm mb-1">
+                    Location: {doctor.location}
+                  </p>
                   <button
                     onClick={() => {
-                      setSelectedDoctor(doctor); // Set selected doctor
-                      setShowModal(true); // Show the modal
+                      setSelectedDoctor(doctor);
+                      setShowModal(true);
                     }}
-                    className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300"
+                    className={`mt-4 px-4 py-2 rounded-lg transition duration-300 ${
+                      theme === "dark"
+                        ? "bg-teal-600 text-gray-100 hover:bg-teal-700"
+                        : "bg-indigo-600 text-white hover:bg-indigo-700"
+                    }`}
                   >
                     Book Appointment
                   </button>
@@ -89,17 +89,16 @@ const Doctors = () => {
               ))}
             </div>
           ) : (
-            <p>No data available!</p> // Message when no doctors are available
+            <p className="text-center py-8">
+              No doctors are available at the moment.
+            </p>
           )}
         </section>
       )}
-
-      {/* Modal for Booking Appointment */}
       {showModal && (
         <AppointmentModal
           doctor={selectedDoctor}
           onClose={() => setShowModal(false)}
-          onBook={handleBookAppointment}
         />
       )}
     </div>

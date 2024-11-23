@@ -2,7 +2,7 @@ const Doctor = require("../models/doctorModel");
 const User = require("../models/userModel");
 const Notification = require("../models/notificationModel");
 const Appointment = require("../models/appointmentModel");
-
+const {Op} = require('sequelize')
 
 const getalldoctors = async (req, res) => {
   try {
@@ -16,6 +16,7 @@ const getalldoctors = async (req, res) => {
       include: [
         {
           model: User, // No alias here
+         
         }
       ]
     });
@@ -30,22 +31,33 @@ const getalldoctors = async (req, res) => {
 
 const getnotdoctors = async (req, res) => {
   try {
+
+
+    const condition = { isDoctor: false };
+    // Only add `id` filter if `req.user` exists
+    if (req.user && req.user.id) {
+      condition.id = { [Op.ne]: req.user.id };
+    }
+
     const docs = await Doctor.findAll({
-      where: { isDoctor: false, id: { [Op.ne]: req.locals } },
+      where: condition,
       include: [
         {
           model: User,
-          as: 'user', 
+          required: false, 
         }
       ]
     });
 
+    console.log("Retrieved docs:", docs);
+
     return res.status(200).json(docs);
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Unable to get non-doctors");
+    console.error("Error in getnotdoctors:", error);
+    return res.status(500).send("Unable to get non-doctors");
   }
 };
+
 
 const applyfordoctor = async (req, res) => {
   try {
