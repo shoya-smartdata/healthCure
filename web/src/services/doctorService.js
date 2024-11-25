@@ -23,7 +23,7 @@ export const getalldoctorsreq = async () => {
     }
 
     // Make the request with the Authorization header
-    const response = await axios.get(`${API_BASE_URL}/api/doctor/getalldoctors`, {
+    const response = await axios.get(`${API_BASE_URL}/api/doctor/getnotdoctors`, {
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the headers
       },

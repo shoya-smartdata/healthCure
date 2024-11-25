@@ -24,7 +24,7 @@ const Login = () => {
       // Use the login function from the context to store the token and user data
       login(token);
       
-      navigate("/"); // Redirect to home or dashboard page
+      navigate("/"); 
     } catch (error) {
       toast.error(error?.message || "Unable to log in. Please try again later.");
     } finally {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaUserAlt, FaStethoscope, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { getalldoctorsreq, acceptDoctor, sendRejectDoctorRequest } from "../services/doctorService";
+import { getalldoctorsreq, acceptDoctor, sendRejectDoctorRequest, getalldoctors } from "../services/doctorService";
 import toast from "react-hot-toast";
 
 const Dashboard = () => {
@@ -8,7 +8,6 @@ const Dashboard = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch doctor applications on component mount
   useEffect(() => {
     const fetchDoctorApplications = async () => {
       try {
