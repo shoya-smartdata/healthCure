@@ -8,7 +8,7 @@ const Hero = () => {
 
   return ( 
     <>
-      <section className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} w-full`}>
+      <section className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} w-full `}>
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-2 items-center gap-8">
           {/* Hero Content */}
           <div className={`text-center md:text-left ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>

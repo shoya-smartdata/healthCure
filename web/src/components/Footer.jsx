@@ -1,10 +1,10 @@
 import React from "react";
-import { useAuth } from "../middleware/AuthContext";
+
 import { useTheme } from "../middleware/ThemeContext"; // Import theme context
 
 const Footer = () => {
 
-  const { theme } = useTheme(); // Get the current theme
+  const { theme } = useTheme(); 
 
   return (
     <footer

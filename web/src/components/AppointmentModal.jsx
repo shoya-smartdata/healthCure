@@ -9,6 +9,7 @@ const AppointmentModal = ({ doctor, onClose, onBook }) => {
   const [time, setTime] = useState("");
   const navigate = useNavigate();
   const { theme } = useTheme(); // Access current theme
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -36,29 +37,57 @@ const AppointmentModal = ({ doctor, onClose, onBook }) => {
   };
 
   return (
-    <div className={`fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 `}>
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+    <div
+      className={`fixed inset-0 flex items-center justify-center ${
+        theme === "dark" ? "bg-gray-900 bg-opacity-70" : "bg-gray-900 bg-opacity-50"
+      } z-50`}
+    >
+      <div
+        className={`p-6 rounded-lg shadow-lg w-96 transition-colors duration-300 ${
+          theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"
+        }`}
+      >
         <h2 className="text-2xl font-bold mb-4">
           Book Appointment with Dr. {doctor.User.firstname} {doctor.User.lastname}
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Date</label>
+            <label
+              className={`block text-sm font-semibold ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Date
+            </label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
+              className={`w-full px-4 py-2 mt-2 border rounded-lg ${
+                theme === "dark"
+                  ? "bg-gray-700 border-gray-600 text-gray-200"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Time</label>
+            <label
+              className={`block text-sm font-semibold ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Time
+            </label>
             <input
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
+              className={`w-full px-4 py-2 mt-2 border rounded-lg ${
+                theme === "dark"
+                  ? "bg-gray-700 border-gray-600 text-gray-200"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
               required
             />
           </div>
@@ -66,13 +95,21 @@ const AppointmentModal = ({ doctor, onClose, onBook }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                theme === "dark"
+                  ? "bg-gray-600 text-gray-200 hover:bg-gray-700"
+                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+              }`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                theme === "dark"
+                  ? "bg-teal-600 text-gray-100 hover:bg-teal-700"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
             >
               Book Appointment
             </button>

@@ -13,6 +13,7 @@ const Dashboard = () => {
     const fetchDoctorApplications = async () => {
       try {
         const data = await getalldoctorsreq();
+          console.log(data, "validate")
         setApplications(data);
       } catch (error) {
         console.error("Error fetching doctor applications:", error);

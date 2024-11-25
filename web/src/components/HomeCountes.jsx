@@ -7,7 +7,7 @@ const HomeCounts = () => {
 
   return (
     <section
-      className={`flex flex-wrap justify-evenly items-center mt-40 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
+      className={`flex flex-wrap justify-evenly items-center${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
     >
       {/* Satisfied Patients */}
       <div

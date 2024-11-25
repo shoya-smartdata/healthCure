@@ -9,7 +9,7 @@ const Doctors = () => {
   const [loading, setLoading] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const { theme } = useTheme(); 
+  const { theme } = useTheme(); // Ensure useTheme returns an object with 'theme'
 
   useEffect(() => {
     const fetchAllDocs = async () => {
@@ -29,16 +29,14 @@ const Doctors = () => {
 
   return (
     <div
-      className={`container mx-auto px-4 py-8 transition-colors duration-300 ${
+      className={`container mx-auto px-4 mt-10 py-10 transition-colors duration-300 ${
         theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-gray-100 text-gray-900"
       }`}
     >
       {loading && <Loading />}
       {!loading && (
         <section>
-          <h2 className="text-3xl font-bold text-center mb-6">
-            Our Doctors
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-6">Our Doctors</h2>
           {doctors.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {doctors.map((doctor) => (
@@ -46,7 +44,7 @@ const Doctors = () => {
                   key={doctor.id}
                   className={`shadow-lg rounded-lg p-6 text-center transition-shadow duration-300 ${
                     theme === "dark"
-                      ? "bg-gray-00 text-gray-100 hover:shadow-gray-700"
+                      ? "bg-gray-800 text-gray-100 hover:shadow-gray-700"
                       : "bg-white text-gray-900 hover:shadow-gray-400"
                   }`}
                 >
@@ -60,18 +58,10 @@ const Doctors = () => {
                   <h3 className="text-2xl font-semibold mb-2">
                     {doctor.User.firstname} {doctor.User.lastname}
                   </h3>
-                  <p className="text-sm mb-1">
-                    Specialization: {doctor.specialization}
-                  </p>
-                  <p className="text-sm mb-1">
-                    Experience: {doctor.experience} years
-                  </p>
-                  <p className="text-sm mb-1">
-                    Contact: {doctor.contact}
-                  </p>
-                  <p className="text-sm mb-1">
-                    Location: {doctor.location}
-                  </p>
+                  <p className="text-sm mb-1">Specialization: {doctor.specialization}</p>
+                  <p className="text-sm mb-1">Experience: {doctor.experience} years</p>
+                  <p className="text-sm mb-1">Contact: {doctor.contact}</p>
+                  <p className="text-sm mb-1">Location: {doctor.location}</p>
                   <button
                     onClick={() => {
                       setSelectedDoctor(doctor);
@@ -89,11 +79,7 @@ const Doctors = () => {
               ))}
             </div>
           ) : (
-            <p className={`text-center py-8 ${
-              theme === "dark"
-                ? "bg-teal-600 text-gray-100 hover:bg-teal-700"
-                : "bg-indigo-600 text-white hover:bg-indigo-700"
-            }`}>
+            <p className="text-center text-lg mt-8">
               No doctors are available at the moment.
             </p>
           )}

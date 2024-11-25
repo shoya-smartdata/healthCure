@@ -6,6 +6,7 @@ const API_BASE_URL = "http://localhost:3030";
 export const getalldoctors = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/api/doctor/getalldoctors`);
+    console.log("data is commong or not", response)
     return response.data; // Assuming response contains the list of doctors
   } catch (error) {
     throw error.response?.data?.message || "Error fetching doctors."; // Catch and throw any errors
@@ -22,7 +23,7 @@ export const getalldoctorsreq = async () => {
     }
 
     // Make the request with the Authorization header
-    const response = await axios.get(`${API_BASE_URL}/api/doctor/getnotdoctors`, {
+    const response = await axios.get(`${API_BASE_URL}/api/doctor/getalldoctors`, {
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the headers
       },
