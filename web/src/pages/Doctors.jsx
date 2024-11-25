@@ -9,7 +9,7 @@ const Doctors = () => {
   const [loading, setLoading] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const { theme } = useTheme(); // Access current theme
+  const { theme } = useTheme(); 
 
   useEffect(() => {
     const fetchAllDocs = async () => {
@@ -30,7 +30,7 @@ const Doctors = () => {
   return (
     <div
       className={`container mx-auto px-4 py-8 transition-colors duration-300 ${
-        theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"
+        theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-gray-100 text-gray-900"
       }`}
     >
       {loading && <Loading />}
@@ -46,7 +46,7 @@ const Doctors = () => {
                   key={doctor.id}
                   className={`shadow-lg rounded-lg p-6 text-center transition-shadow duration-300 ${
                     theme === "dark"
-                      ? "bg-gray-800 text-gray-100 hover:shadow-gray-700"
+                      ? "bg-gray-00 text-gray-100 hover:shadow-gray-700"
                       : "bg-white text-gray-900 hover:shadow-gray-400"
                   }`}
                 >
@@ -89,7 +89,11 @@ const Doctors = () => {
               ))}
             </div>
           ) : (
-            <p className="text-center py-8">
+            <p className={`text-center py-8 ${
+              theme === "dark"
+                ? "bg-teal-600 text-gray-100 hover:bg-teal-700"
+                : "bg-indigo-600 text-white hover:bg-indigo-700"
+            }`}>
               No doctors are available at the moment.
             </p>
           )}

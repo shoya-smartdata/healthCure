@@ -96,9 +96,9 @@ const acceptdoctor = async (req, res) => {
   try {
     const { id } = req.body;
 
-    // Update User's isDoctor status to true and set status to "accepted"
     const user = await User.findByPk(id);
-
+     console.log(user);
+     
     if (!user) {
       return res.status(404).send("User not found");
     }
@@ -107,8 +107,6 @@ const acceptdoctor = async (req, res) => {
       isDoctor: true,
       status: "verifyded",
     });
-
-    // Update Doctor's isDoctor status to true
     const doctor = await Doctor.findOne({ where: { userId: id } });
 
     if (doctor) {
@@ -132,8 +130,8 @@ const rejectdoctor = async (req, res) => {
   try {
     const { id } = req.body;
 
-    // Update User's isDoctor status to false and set status to "rejected"
     const user = await User.findByPk(id);
+    
 
     if (!user) {
       return res.status(404).send("User not found");

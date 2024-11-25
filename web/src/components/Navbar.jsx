@@ -56,12 +56,12 @@ const Navbar = () => {
 
         {/* Menu for logout, theme toggle, and dashboard */}
         {isMenuOpen && (
-          <div className="absolute bg-white text-black mt-4 right-6 top-14 py-2 px-4 rounded shadow-md w-48">
+          <div className="absolute bg-white text-black mt-4 right-6 top-14 py-2 px-4 rounded shadow-md w-48 z-10">
             {user ? (
               <>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 rounded z-10"
+                  className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 rounded z-50"
                 >
                   <FontAwesomeIcon icon={faSignOutAlt} className="w-5 h-5" /> 
                   Logout

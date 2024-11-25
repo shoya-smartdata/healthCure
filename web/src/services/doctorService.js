@@ -33,3 +33,49 @@ export const getalldoctorsreq = async () => {
     throw error.response?.data?.message || 'Unable to fetch applied doctor requests';
   }
 };
+
+
+export const acceptDoctor = async (id) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authorization token is missing');
+    }
+    const response = await axios.put(
+      `${API_BASE_URL}/api/doctor/acceptdoctor`,
+      { id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Unable to accept doctor request!";
+  }
+};
+
+
+
+
+export const sendRejectDoctorRequest = async (id) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authorization token is missing');
+    }
+    const response = await axios.put(
+      `${API_BASE_URL}/api/doctor/rejectdoctor`, 
+      { id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Unable to reject doctor request!";
+  }
+};

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { bookappointment } from "../services/userService";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../middleware/ThemeContext";
 
 const AppointmentModal = ({ doctor, onClose, onBook }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const navigate = useNavigate();
-
+  const { theme } = useTheme(); // Access current theme
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -35,7 +36,7 @@ const AppointmentModal = ({ doctor, onClose, onBook }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <div className={`fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 `}>
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-4">
           Book Appointment with Dr. {doctor.User.firstname} {doctor.User.lastname}
