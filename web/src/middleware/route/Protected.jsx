@@ -4,7 +4,8 @@ import { useAuth } from "../AuthContext"; // Import useAuth hook
 
 const Protected = ({ children }) => {
   const { user } = useAuth(); // Access the user from context
-
+  console.log(user, "protected");
+  
   if (!user) {
     return <Navigate to="/login" replace />; // Redirect to login if not authenticated
   }

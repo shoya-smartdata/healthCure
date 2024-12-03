@@ -60,8 +60,8 @@ const Doctors = () => {
                   </h3>
                   <p className="text-sm mb-1">Specialization: {doctor.specialization}</p>
                   <p className="text-sm mb-1">Experience: {doctor.experience} years</p>
-                  <p className="text-sm mb-1">Contact: {doctor.contact}</p>
-                  <p className="text-sm mb-1">Location: {doctor.location}</p>
+                  <p className="text-sm mb-1">Contact: {doctor.User.mobile}</p>
+                  <p className="text-sm mb-1">Location: {doctor.User.address}</p>
                   <button
                     onClick={() => {
                       setSelectedDoctor(doctor);

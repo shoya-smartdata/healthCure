@@ -1,35 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { FaUserAlt, FaStethoscope, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { getalldoctorsreq, acceptDoctor, sendRejectDoctorRequest, getalldoctors } from "../services/doctorService";
+import { FaUserAlt, FaStethoscope, FaCheckCircle, FaTimesCircle, FaArrowRight, FaArrowLeft } from "react-icons/fa";
+import { getalldoctorsreq, acceptDoctor, sendRejectDoctorRequest , getalldoctors
+
+} from "../services/doctorService";
 import toast from "react-hot-toast";
 
 const Dashboard = () => {
   // State to handle doctor application data
   const [applications, setApplications] = useState([]);
+  const [userData, setUserdata] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Sidebar toggle state
+// all doctor  requests here ! 
+const fetchDoctorApplications = async () => {
+  try {
+    const data = await getalldoctorsreq();
 
-  useEffect(() => {
-    const fetchDoctorApplications = async () => {
-      try {
-        const data = await getalldoctorsreq();
-          console.log(data, "validate")
-        setApplications(data);
-      } catch (error) {
-        console.error("Error fetching doctor applications:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setApplications(data);
+  } catch (error) {
+    console.error("Error fetching doctor applications:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
-    fetchDoctorApplications();
-  }, []);
+
 
   // Function to accept a doctor application
   const handleAcceptDoctorApplication = async (id) => {
     try {
       await acceptDoctor(id);
       toast.success("Doctor request accepted!");
-      // Update the status of the accepted application in the UI
       setApplications((prev) =>
         prev.map((app) =>
           app.User.id === id ? { ...app, User: { ...app.User, status: "accepted" } } : app
@@ -46,7 +47,6 @@ const Dashboard = () => {
     try {
       await sendRejectDoctorRequest(id);
       toast.success("Doctor request canceled!");
-      // Remove the rejected application from the UI
       setApplications((prev) => prev.filter((app) => app.User.id !== id));
     } catch (error) {
       console.error("Unable to reject doctor request:", error);
@@ -54,26 +54,61 @@ const Dashboard = () => {
     }
   };
 
+  // get all users 
+  const handleAllusers = async ()=>{
+   try {
+       const userData = await getalldoctors();
+       setUserdata(userData);
+   } catch (error) {
+        console.log("an error", error);
+        
+   }
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-100 flex ">
+      {/* Hamburger Menu */}
+      <div className="absolute left-4 z-50">
+      <div
+  className={`absolute z-50 transition-transform duration-300 ${
+    sidebarOpen ? "left-[132px]" : "left-4"
+  }`}
+>
+  <button
+    className="text-white bg-indigo-600 p-2 rounded-full focus:outline-none hover:bg-indigo-700 transition duration-200"
+    onClick={() => setSidebarOpen(!sidebarOpen)}
+  >
+    {sidebarOpen ? <FaArrowLeft /> : <FaArrowRight />}
+  </button>
+</div>
+
+</div>
+
+
       {/* Sidebar */}
-      <div className="w-64 bg-indigo-600 text-white p-6 space-y-8">
-        <h2 className="text-2xl font-semibold">Admin Panel</h2>
-        <nav className="space-y-4">
-          <a href="#" className="block text-lg hover:bg-blue-700 p-3 rounded">
-            Dashboard
+      <div
+        className={`fixed top-16 left-0 h-full bg-indigo-600 text-white p-6 space-y-8 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-200 ease-in-out z-40`}
+      >
+        <h2 className="text-2xl font-semibold mt-10">Admin Panel</h2>
+        <nav className="space-y-1">
+          <a href="/" className="block text-lg hover:bg-blue-700 p-2 rounded">
+            Home
           </a>
-          <a href="#" className="block text-lg hover:bg-blue-700 p-3 rounded">
-            Doctor Applications
-          </a>
-          <a href="#" className="block text-lg hover:bg-blue-700 p-3 rounded">
-            User Data
-          </a>
+          <button
+          onClick={()=>fetchDoctorApplications()}>
+            Get Dr-Applications
+          </button>
+          <button
+          className="block text-lg hover:bg-blue-700 p-2 rounded"
+          onClick={()=> handleAllusers()}
+          > user data</button>
         </nav>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 overflow-y-auto">
+      <div className="flex-1 p-8 overflow-y-auto ml-0 lg:ml-64 transition-all duration-300">
         {/* Doctor Applications Section */}
         <section className="mb-12">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6">
@@ -164,16 +199,16 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {applications.map((application) => (
+                {userData.map((userdata) => (
                   <tr
-                    key={application.User.id}
+                    key={userdata.User.id}
                     className="border-b hover:bg-gray-50 transition duration-300"
                   >
                     <td className="py-3 px-6 text-gray-800">
-                      {application.User.firstname} {application.User.lastname}
+                      {userdata.User.firstname} {userdata.User.lastname}
                     </td>
                     <td className="py-3 px-6 text-gray-800">
-                      {application.User.email}
+                      {userdata.User.email}
                     </td>
                   </tr>
                 ))}

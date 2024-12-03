@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import { useTheme } from "../middleware/ThemeContext";
 
 const Layout = () => {
-  const theme = useTheme(); // Correctly calling the hook
+  const theme = useTheme();
   return (
     <>
       <Navbar />

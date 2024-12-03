@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", token); // Store token
       localStorage.setItem("userRole", JSON.stringify({ isAdmin: decodedUser.isAdmin, isDoctor: decodedUser.isDoctor })); // Store roles
       setUser(decodedUser);
+      
     } catch (error) {
       console.error("Error decoding login token:", error);
     }
