@@ -2,6 +2,7 @@ const Doctor = require("../models/doctorModel");
 const User = require("../models/userModel");
 const Notification = require("../models/notificationModel");
 const Appointment = require("../models/appointmentModel");
+const {Op} = require('sequelize')
 
 const getalldoctors = async (req, res) => {
   try {
@@ -14,8 +15,8 @@ const getalldoctors = async (req, res) => {
       where: { isDoctor: true, ...condition },
       include: [
         {
-          model: User,
-          as: 'user', // Adjust to match your alias in the association
+          model: User, // No alias here
+         
         }
       ]
     });
@@ -27,34 +28,48 @@ const getalldoctors = async (req, res) => {
   }
 };
 
+
 const getnotdoctors = async (req, res) => {
   try {
+
+
+    const condition = { isDoctor: false };
+    // Only add `id` filter if `req.user` exists
+    if (req.user && req.user.id) {
+      condition.id = { [Op.ne]: req.user.id };
+    }
+
     const docs = await Doctor.findAll({
-      where: { isDoctor: false, id: { [Op.ne]: req.locals } },
+      where: condition,
       include: [
         {
           model: User,
-          as: 'user', // Adjust to match your alias in the association
+          required: false, 
         }
       ]
     });
 
+    console.log("Retrieved docs:", docs);
+
     return res.status(200).json(docs);
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Unable to get non-doctors");
+    console.error("Error in getnotdoctors:", error);
+    return res.status(500).send("Unable to get non-doctors");
   }
 };
 
+
 const applyfordoctor = async (req, res) => {
   try {
-    if (!req.locals || !req.locals.userId) {
-      return res.status(400).json({ message: "User ID is missing" });
+    const userId = req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is missing in the request" });
     }
 
     // Check if the user has already applied to become a doctor
     const alreadyFound = await Doctor.findOne({
-      where: { userId: req.locals.userId }
+      where: { userId },
     });
 
     if (alreadyFound) {
@@ -63,34 +78,35 @@ const applyfordoctor = async (req, res) => {
 
     // Create the doctor application
     const doctor = await Doctor.create({
-      ...req.body.formDetails,
-      userId: req.locals.userId,
+      ...req.body,
+      userId,
     });
 
-    return res.status(201).json({ message: "Application submitted successfully" });
+    return res
+      .status(201)
+      .json({ message: "Application submitted successfully" });
   } catch (error) {
     console.error("Error during doctor application submission:", error);
     return res.status(500).json({ message: "Unable to submit application" });
   }
 };
 
+
 const acceptdoctor = async (req, res) => {
   try {
     const { id } = req.body;
 
-    // Update User's isDoctor status to true and set status to "accepted"
     const user = await User.findByPk(id);
-
+     console.log(user);
+     
     if (!user) {
       return res.status(404).send("User not found");
     }
 
     await user.update({
       isDoctor: true,
-      status: "accepted",
+      status: "verifyded",
     });
-
-    // Update Doctor's isDoctor status to true
     const doctor = await Doctor.findOne({ where: { userId: id } });
 
     if (doctor) {
@@ -114,8 +130,8 @@ const rejectdoctor = async (req, res) => {
   try {
     const { id } = req.body;
 
-    // Update User's isDoctor status to false and set status to "rejected"
     const user = await User.findByPk(id);
+    
 
     if (!user) {
       return res.status(404).send("User not found");

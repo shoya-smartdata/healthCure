@@ -6,44 +6,60 @@ const { Op } = require("sequelize");
 
 const getAllAppointments = async (req, res) => {
   try {
+    const userId = req.user.id; // Get user ID from middleware
+    const isAdmin = req.user.isAdmin;
+    const isDoctor = req.user.isDoctor;
     const searchKeyword = req.query.search;
 
-    const whereClause = searchKeyword
-      ? {
-          [Op.or]: [
-            { userId: searchKeyword }, // Matches userId
-            { doctorId: searchKeyword }, // Matches doctorId
-          ],
-        }
-      : {};
+    // Construct where clause based on user type
+    const whereClause = {
+      ...(isDoctor && { doctorId: userId }), // If the user is a doctor, filter by doctorId
+      ...(searchKeyword && {
+        [Op.or]: [
+          { userId: { [Op.like]: `%${searchKeyword}%` } }, // Matches userId
+          { doctorId: { [Op.like]: `%${searchKeyword}%` } }, // Matches doctorId
+        ],
+      }),
+    };
+
+    // Admins should see all appointments, no additional filtering
+    if (isAdmin) {
+      delete whereClause.doctorId;
+    }
 
     const appointments = await Appointment.findAll({
       where: whereClause,
       include: [
         {
           model: Doctor, // Include associated doctor data
-          as: "doctor", // Make sure `as` matches your association alias
         },
         {
           model: User, // Include associated user data
-          as: "user", // Make sure `as` matches your association alias
         },
       ],
     });
 
     return res.status(200).json(appointments);
   } catch (error) {
-    console.error(error); // Log the error for debugging
-    res.status(500).send("Unable to get appointments");
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({ message: "Unable to get appointments" });
   }
 };
 
 const bookappointment = async (req, res) => {
   try {
-    // Assuming req.locals holds the current user's ID
-    const userId = req.locals;
-    const { doctorId, doctorname, date, time } = req.body;
+    // Get userId from req.user (set by the auth middleware)
+    const userId = req.user.id;
+    const { doctorId, date, time } = req.body;
 
+    // Ensure the userId exists
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    //
+    const doctorCheck = await Doctor.findAll();
+    console.log(doctorCheck);
+    
     // Create a new appointment
     const appointment = await Appointment.create({
       date,
@@ -55,7 +71,7 @@ const bookappointment = async (req, res) => {
     // Send notification to the user
     const userNotification = await Notification.create({
       userId,
-      content: `You booked an appointment with Dr. ${doctorname} for ${date} at ${time}`,
+      content: `You booked an appointment for ${date} at ${time}`,
     });
 
     // Get the user data

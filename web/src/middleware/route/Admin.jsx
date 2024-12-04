@@ -1,20 +1,19 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-
-// Simulate authentication state (replace with actual authentication logic)
-const useAuth = () => {
-  const user = JSON.parse(localStorage.getItem("user")); // Replace with your auth logic
-  return { isAuthenticated: !!user, user };
-};
+import { useAuth } from "../AuthContext";
 
 const Admin = ({ children }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
 
-  if (!isAuthenticated || user.role !== "admin") {
+  console.log("Current User:", user);
+
+  // Check if the user exists and has admin privileges
+  if (!user || !user.isAdmin) {
     return <Navigate to="/error" replace />;
   }
 
-  return children;
+  return children; // Render children (admin content) if authenticated as admin
 };
 
 export default Admin;
+

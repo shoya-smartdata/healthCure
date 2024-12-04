@@ -1,20 +1,16 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-
-// Simulate authentication state (replace with actual authentication logic)
-const useAuth = () => {
-  const user = JSON.parse(localStorage.getItem("user")); // Replace with your auth logic
-  return { isAuthenticated: !!user, user };
-};
+import { useAuth } from "../AuthContext"; // Import useAuth hook
 
 const Protected = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  const { user } = useAuth(); // Access the user from context
+  console.log(user, "protected");
+  
+  if (!user) {
+    return <Navigate to="/login" replace />; // Redirect to login if not authenticated
   }
 
-  return children;
+  return children; // Render protected content if authenticated
 };
 
 export default Protected;

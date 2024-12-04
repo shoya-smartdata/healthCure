@@ -1,16 +1,11 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-
-// Simulate authentication state (replace with actual authentication logic)
-const useAuth = () => {
-  const user = JSON.parse(localStorage.getItem("user")); // Replace with your auth logic
-  return { isAuthenticated: !!user, user };
-};
+import { useAuth } from "../AuthContext";
 
 const Public = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
-  if (isAuthenticated) {
+  if (user) {
     return <Navigate to="/" replace />;
   }
 

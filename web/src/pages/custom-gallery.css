@@ -1,0 +1,23 @@
+.custom-gallery .image-gallery-slide .image-gallery-image {
+    border-radius: 8px;
+  }
+  
+  .custom-gallery .image-gallery-left-nav,
+  .custom-gallery .image-gallery-right-nav {
+    font-size: 2rem; /* Increase arrow size */
+    color: #333; /* Arrow color */
+  }
+  
+  .custom-gallery .image-gallery-thumbnail {
+    border-radius: 50%; /* Make thumbnails circular */
+    overflow: hidden;
+  }
+  
+  .custom-gallery .image-gallery-thumbnail img {
+    object-fit: cover;
+  }
+  
+  .custom-gallery .image-gallery-thumbnail.active {
+    border: 2px solid #4f46e5; /* Highlight active thumbnail */
+  }
+  
