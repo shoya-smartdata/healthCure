@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { getAppointments } from "../services/doctorService";
 import toast from "react-hot-toast";
+import { useTheme } from "../middleware/ThemeContext"; // Assuming we have a ThemeContext
+
 
 const DoctorDashboard = () => {
   const [appointmentData, setAppointmentData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme, toggleTheme } = useTheme(); 
 
   const fetchAppointments = async () => {
     try {
@@ -46,28 +49,32 @@ const DoctorDashboard = () => {
   return (
     <div className="min-h-screen flex bg-gradient-to-r from-blue-50 to-blue-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-indigo-600 text-white flex flex-col justify-between">
-        <div className="p-6">
-          <h2 className="text-2xl font-semibold mb-6">Doctor Dashboard</h2>
-          <nav>
-            <ul>
-              <li className="mb-4">
-                <a href="#" className="block px-4 py-2 rounded hover:bg-blue-700">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#" className="block px-4 py-2 rounded hover:bg-blue-700">
-                  Appointments
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <footer className="p-6">
-          <p className="text-sm">© 2024 Doctor Portal</p>
-        </footer>
-      </aside>
+      <aside
+  className={`w-64 text-white flex flex-col justify-between transition-all ${
+    theme === "dark" ? "bg-gray-800" : "bg-indigo-600"
+  }`}
+>
+  <div className="p-6">
+    <h2 className="text-2xl font-semibold mb-6">Doctor Dashboard</h2>
+    <nav>
+      <ul>
+        <li className="mb-4">
+          <a href="#" className="block px-4 py-2 rounded hover:bg-blue-700">
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="#" className="block px-4 py-2 rounded hover:bg-blue-700">
+            Appointments
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <footer className="p-6">
+    <p className="text-sm">© 2024 Doctor Portal</p>
+  </footer>
+</aside>
 
       {/* Main Content */}
       <main className="flex-1 p-8">

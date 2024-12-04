@@ -1,11 +1,14 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
-    "./index.html",   // Ensure Tailwind processes your HTML files
-    "./src/**/*.{js,jsx,ts,tsx}",  // Process JSX/TSX files in your src folder
+    './index.html',
+    './src/**/*.{vue,js,ts,jsx,tsx}',
+  ],
+  safelist: [
+    'bg-blue-500',
+    'text-center', // Add all dynamic or conditionally applied classes here
   ],
   theme: {
     extend: {},
   },
   plugins: [],
-}
+};
