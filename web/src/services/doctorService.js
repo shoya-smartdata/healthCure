@@ -80,3 +80,28 @@ export const sendRejectDoctorRequest = async (id) => {
     throw error.response?.data?.message || "Unable to reject doctor request!";
   }
 };
+
+
+// data or api for doctor where dr will get there requestes 
+
+export const getAppointments = async (searchKeyword = "") => {
+  try {
+    const token = localStorage.getItem('token'); // Get token from local storage
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`, // Attach the token for authentication
+      },
+    };
+
+    // Send the request with optional searchKeyword as a query parameter
+    const response = await axios.get(`${API_BASE_URL}/api/appointment/getallappointments`, {
+      ...config,
+      params: { search: searchKeyword },
+    });
+
+    return response.data; // Return the fetched appointments
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    throw error.response?.data?.message || "Failed to fetch appointments"; // Provide better error handling
+  }
+};

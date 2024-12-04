@@ -1,65 +1,47 @@
-import React, { useState } from "react";
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/css/image-gallery.css";
-import "./custom-gallery.css"; // Add custom CSS
-
-const appointments = [
-  {
-    id: 1,
-    patientName: "John Doe",
-    reason: "Routine Checkup",
-    date: "2024-11-23",
-    time: "10:00 AM",
-    status: "Pending",
-    images: [
-      {
-        original: "https://picsum.photos/600/400?random=1",
-        thumbnail: "https://picsum.photos/100/100?random=1",
-      },
-      {
-        original: "https://picsum.photos/600/400?random=2",
-        thumbnail: "https://picsum.photos/100/100?random=2",
-      },
-      {
-        original: "https://picsum.photos/600/400?random=3",
-        thumbnail: "https://picsum.photos/100/100?random=3",
-      },
-    ],
-  },
-  {
-    id: 2,
-    patientName: "Jane Smith",
-    reason: "Skin Allergy",
-    date: "2024-11-24",
-    time: "12:00 PM",
-    status: "Accepted",
-    images: [
-      {
-        original: "https://picsum.photos/600/400?random=4",
-        thumbnail: "https://picsum.photos/100/100?random=4",
-      },
-      {
-        original: "https://picsum.photos/600/400?random=5",
-        thumbnail: "https://picsum.photos/100/100?random=5",
-      },
-      {
-        original: "https://picsum.photos/600/400?random=6",
-        thumbnail: "https://picsum.photos/100/100?random=6",
-      },
-    ],
-  },
-];
+import React, { useEffect, useState } from "react";
+import { getAppointments } from "../services/doctorService";
+import toast from "react-hot-toast";
 
 const DoctorDashboard = () => {
-  const [appointmentData, setAppointmentData] = useState(appointments);
+  const [appointmentData, setAppointmentData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleStatusChange = (id, status) => {
-    setAppointmentData((prev) =>
-      prev.map((appointment) =>
-        appointment.id === id ? { ...appointment, status } : appointment
-      )
-    );
+  const fetchAppointments = async () => {
+    try {
+      setLoading(true);
+      const data = await getAppointments(); // Remove token; no need to pass it explicitly
+      console.log("Fetched appointments:", data); // Log fetched data
+      setAppointmentData(data);
+    } catch (err) {
+      console.error("Error fetching appointments:", err); // Log error
+      toast.error(err); // Display error notification
+      setError(err.message || "Failed to fetch appointments");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleStatusChange = async (id, status) => {
+    try {
+      setAppointmentData((prev) =>
+        prev.map((appointment) =>
+          appointment.id === id ? { ...appointment, status } : appointment
+        )
+      );
+      toast.success(`Appointment ${status}`); // Show success notification
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
+
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  if (loading) return <p>Loading appointments...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="min-h-screen flex bg-gradient-to-r from-blue-50 to-blue-100">
@@ -90,65 +72,59 @@ const DoctorDashboard = () => {
       {/* Main Content */}
       <main className="flex-1 p-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Appointments</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {appointmentData.map((appointment) => (
-            <div
-              key={appointment.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden flex hover:shadow-xl transition-shadow"
-            >
-              {/* Left: Details */}
-              <div className="w-1/2 p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                  {appointment.patientName}
-                </h3>
-                <p className="text-gray-600">
-                  <strong>Reason:</strong> {appointment.reason}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Date:</strong> {appointment.date}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Time:</strong> {appointment.time}
-                </p>
-                <p className="mt-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      appointment.status === "Pending"
-                        ? "bg-yellow-400 text-yellow-800"
-                        : "bg-green-500 text-white"
-                    }`}
-                  >
-                    {appointment.status}
-                  </span>
-                </p>
-                <div className="mt-6 flex space-x-4">
-                  <button
-                    onClick={() => handleStatusChange(appointment.id, "Accepted")}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleStatusChange(appointment.id, "Rejected")}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
-
-              {/* Right: Image Gallery */}
-              <div className="w-1/2">
-                <ImageGallery
-                  items={appointment.images}
-                  showPlayButton={false} // Remove play button
-                  showFullscreenButton={true} // Allow full-screen
-                  additionalClass="custom-gallery" // Add custom class
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        {appointmentData.length === 0 ? (
+          <p>No appointments available.</p>
+        ) : (
+          <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+            <table className="min-w-full table-auto">
+              <thead className="bg-gray-800 text-white">
+                <tr>
+                  <th className="px-4 py-2 text-left">Patient Name</th>
+                  <th className="px-4 py-2 text-left">Reason</th>
+                  <th className="px-4 py-2 text-left">Date</th>
+                  <th className="px-4 py-2 text-left">Time</th>
+                  <th className="px-4 py-2 text-left">Status</th>
+                  <th className="px-4 py-2 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointmentData.map((appointment) => (
+                  <tr key={appointment.id} className="border-b hover:bg-gray-100">
+                    <td className="px-4 py-2">{appointment.User.firstname + " " + appointment.User.lastname}</td>
+                    <td className="px-4 py-2">{appointment.reason}</td>
+                    <td className="px-4 py-2">{appointment.date}</td>
+                    <td className="px-4 py-2">{appointment.time}</td>
+                    <td className="px-4 py-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          appointment.status === "Pending"
+                            ? "bg-yellow-400 text-yellow-800"
+                            : "bg-green-500 text-white"
+                        }`}
+                      >
+                        {appointment.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">
+                      <button
+                        onClick={() => handleStatusChange(appointment.id, "Accepted")}
+                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 mr-2"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleStatusChange(appointment.id, "Rejected")}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                      >
+                        Reject
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </main>
     </div>
   );

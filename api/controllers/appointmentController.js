@@ -7,17 +7,25 @@ const { Op } = require("sequelize");
 const getAllAppointments = async (req, res) => {
   try {
     const userId = req.user.id; // Get user ID from middleware
+    const isAdmin = req.user.isAdmin;
+    const isDoctor = req.user.isDoctor;
     const searchKeyword = req.query.search;
 
+    // Construct where clause based on user type
     const whereClause = {
-      userId, // Filter by logged-in user ID
+      ...(isDoctor && { doctorId: userId }), // If the user is a doctor, filter by doctorId
       ...(searchKeyword && {
         [Op.or]: [
-          { userId: searchKeyword }, // Matches userId
-          { doctorId: searchKeyword }, // Matches doctorId
+          { userId: { [Op.like]: `%${searchKeyword}%` } }, // Matches userId
+          { doctorId: { [Op.like]: `%${searchKeyword}%` } }, // Matches doctorId
         ],
       }),
     };
+
+    // Admins should see all appointments, no additional filtering
+    if (isAdmin) {
+      delete whereClause.doctorId;
+    }
 
     const appointments = await Appointment.findAll({
       where: whereClause,
