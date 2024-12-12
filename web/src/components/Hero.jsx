@@ -2,6 +2,7 @@ import React from "react";
 import { useTheme } from "../middleware/ThemeContext"; // Import the theme context
 import AboutUs from "./AboutUs";
 import HomeCounts from "./HomeCountes";
+import Chat from "./Chat";
 
 const Hero = () => {
   const { theme } = useTheme(); // Get the current theme
@@ -46,6 +47,7 @@ const Hero = () => {
         <AboutUs />
         <HomeCounts />
       </section>
+      <Chat/>
     </>
   );
 };

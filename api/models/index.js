@@ -28,7 +28,7 @@ User.hasOne(Doctor, { foreignKey: 'userId' });
 Appointment.belongsTo(User, { foreignKey: "userId" });
 Appointment.belongsTo(Doctor, { foreignKey: "doctorId" });
 
-// Sync all models with the database
+
 const syncModels = async () => {
   try {
     await sequelize.sync({ alter: true });
