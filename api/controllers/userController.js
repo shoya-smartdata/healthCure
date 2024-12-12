@@ -26,9 +26,7 @@ const getallusers = async (req, res) => {
   try {
     // Get all users except the logged-in user
     const users = await User.findAll({
-      where: {
-        id: { [Op.ne]: req.locals }, // Exclude the logged-in user from the result
-      },
+     
       attributes: { exclude: ["password"] }, // Exclude password field
     });
    
