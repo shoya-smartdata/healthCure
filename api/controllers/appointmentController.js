@@ -12,19 +12,25 @@ const getAllAppointments = async (req, res) => {
     const searchKeyword = req.query.search;
 
     // Construct where clause based on user type
-    const whereClause = {
-      ...(isDoctor && { doctorId: userId }), // If the user is a doctor, filter by doctorId
-      ...(searchKeyword && {
-        [Op.or]: [
-          { userId: { [Op.like]: `%${searchKeyword}%` } }, // Matches userId
-          { doctorId: { [Op.like]: `%${searchKeyword}%` } }, // Matches doctorId
-        ],
-      }),
-    };
+    let whereClause = {};
 
-    // Admins should see all appointments, no additional filtering
-    if (isAdmin) {
-      delete whereClause.doctorId;
+    if (isDoctor) {
+      // If the user is a doctor, filter by doctorId
+      whereClause.doctorId = userId;
+    } else if (!isAdmin) {
+      // If the user is neither an admin nor a doctor, filter by userId
+      whereClause.userId = userId;
+    }
+
+    if (searchKeyword) {
+      // Apply search filter if keyword is provided
+      whereClause = {
+        ...whereClause,
+        [Op.or]: [
+          { userId: { [Op.like]: `%${searchKeyword}%` } },
+          { doctorId: { [Op.like]: `%${searchKeyword}%` } },
+        ],
+      };
     }
 
     const appointments = await Appointment.findAll({
@@ -32,6 +38,7 @@ const getAllAppointments = async (req, res) => {
       include: [
         {
           model: Doctor, // Include associated doctor data
+          attributes: ['id', 'fees', 'experience', 'specialization', ], 
         },
         {
           model: User, // Include associated user data
@@ -45,6 +52,7 @@ const getAllAppointments = async (req, res) => {
     res.status(500).json({ message: "Unable to get appointments" });
   }
 };
+
 
 const bookappointment = async (req, res) => {
   try {
