@@ -18,7 +18,6 @@ const getAllAppointments = async (req, res) => {
       // If the user is a doctor, filter by doctorId
       whereClause.doctorId = userId;
     } else if (!isAdmin) {
-      // If the user is neither an admin nor a doctor, filter by userId
       whereClause.userId = userId;
     }
 
@@ -100,39 +99,33 @@ const bookappointment = async (req, res) => {
 
 const completed = async (req, res) => {
   try {
-    const { appointid, doctorId, doctorname } = req.body;
-    const userId = req.locals;
+    const { appointmentId } = req.body;
+    const doctorId = req.user.id; // Extract doctorId from the middleware
 
-    // Update the appointment status to 'Completed'
-    const appointment = await Appointment.findByPk(appointid);
+    // Find the appointment by ID
+    const appointment = await Appointment.findByPk(appointmentId);
 
     if (!appointment) {
       return res.status(404).send("Appointment not found");
     }
 
+    // Verify the doctor is associated with the appointment
+    if (appointment.doctorId !== doctorId) {
+      return res
+        .status(403)
+        .send("You are not authorized to update this appointment");
+    }
+
+    // Update the appointment status to "Completed"
     await appointment.update({ status: "Completed" });
 
-    // Send notification to the user
-    const userNotification = await Notification.create({
-      userId,
-      content: `Your appointment with Dr. ${doctorname} has been completed`,
-    });
-
-    // Get the user data
-    const user = await User.findByPk(userId);
-
-    // Send notification to the doctor
-    const doctorNotification = await Notification.create({
-      userId: doctorId,
-      content: `Your appointment with ${user.firstname} ${user.lastname} has been completed`,
-    });
-
-    return res.status(200).send("Appointment completed");
+    return res.status(200).send("Appointment status updated to Completed");
   } catch (error) {
     console.error("Error completing appointment:", error);
     res.status(500).send("Unable to complete appointment");
   }
 };
+
 
 module.exports = {
   getAllAppointments,

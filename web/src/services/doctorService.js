@@ -38,6 +38,7 @@ export const getalldoctorsreq = async () => {
 
 export const acceptDoctor = async (id) => {
   try {
+    console.log(id)
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('Authorization token is missing');
@@ -45,13 +46,16 @@ export const acceptDoctor = async (id) => {
     const response = await axios.put(
       `${API_BASE_URL}/api/doctor/acceptdoctor`,
       { id },
+      
       {
         headers: {
           Authorization: `Bearer ${token}`, 
         },
       }
+     
     );
-    return response.data;
+      
+    return response;
   } catch (error) {
     throw error.response?.data?.message || "Unable to accept doctor request!";
   }
@@ -105,3 +109,26 @@ export const getAppointments = async (searchKeyword = "") => {
     throw error.response?.data?.message || "Failed to fetch appointments"; // Provide better error handling
   }
 };
+
+
+
+export const acceptAppointment = async (id)=>{
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authorization token is missing');
+    }
+  const response = await axios.put(
+    `${API_BASE_URL}/api/appointment/completed`,
+    { id },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
+    }
+  );
+  return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Unable to accept appointment request!";
+  }
+}
