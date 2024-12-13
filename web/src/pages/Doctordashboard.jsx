@@ -59,13 +59,30 @@ const DoctorDashboard = () => {
     <nav>
       <ul>
         <li className="mb-4">
-          <a href="#" className="block px-4 py-2 rounded hover:bg-blue-700">
+          <a
+            href="#"
+            className="block px-4 py-2 rounded hover:bg-blue-700"
+            onClick={() => setActiveTab("home")}
+          >
             Home
           </a>
         </li>
-        <li>
-          <a href="#" className="block px-4 py-2 rounded hover:bg-blue-700">
+        <li className="mb-4">
+          <a
+            href="#"
+            className="block px-4 py-2 rounded hover:bg-blue-700"
+            onClick={() => setActiveTab("appointments")}
+          >
             Appointments
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            className="block px-4 py-2 rounded hover:bg-blue-700"
+            onClick={() => setActiveTab("inbox")}
+          >
+            Inbox
           </a>
         </li>
       </ul>
@@ -75,6 +92,7 @@ const DoctorDashboard = () => {
     <p className="text-sm">© 2024 Doctor Portal</p>
   </footer>
 </aside>
+
 
       {/* Main Content */}
       <main className="flex-1 p-8">
