@@ -16,6 +16,10 @@ User.hasMany(Notification, { foreignKey: 'userId' });
 // In doctorModel.js
 Doctor.hasMany(Appointment, { foreignKey: 'doctorId' });
 Doctor.hasMany(Notification, { foreignKey: 'userId' });
+
+
+
+
 // In doctorModel.js
 Doctor.belongsTo(User, { foreignKey: 'userId' });
 
