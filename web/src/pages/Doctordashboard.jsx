@@ -29,25 +29,21 @@ const DoctorDashboard = () => {
 
   const handleStatusChange = async (id) => {
     try {
-   
-      // Call the service function to update the appointment status
-      await acceptAppointment(id, status );
+      const updatedAppointment = await acceptAppointment(id); // Call the service
   
-      // Update the local state to reflect the new status
       setAppointmentData((prev) =>
         prev.map((appointment) =>
-          appointment.id === id ? { ...appointment, status: "Completed" } : appointment
+          appointment.id === id ? updatedAppointment : appointment
         )
       );
   
-      // Show success notification
-      toast.success(`Appointment marked as ${status}`);
+      toast.success(`Appointment marked as Accepted`);
     } catch (error) {
       console.error("Error updating status:", error);
-      // Show error notification
-      toast.error(error || "Failed to update status.");
+      toast.error(error.message || "Failed to update status.");
     }
   };
+  
   
   useEffect(() => {
     if (activeTab === "appointments") {
@@ -129,7 +125,7 @@ const DoctorDashboard = () => {
                     {appointmentData.map((appointment) => (
                       <tr key={appointment.id} className="border-b hover:bg-gray-100">
                         <td className="px-4 py-2">
-                          {appointment.User.firstname + " " + appointment.User.lastname}
+                          {appointment?.User?.firstname + " " + appointment?.User?.lastname}
                         </td>
                         <td className="px-4 py-2">{appointment.reason}</td>
                         <td className="px-4 py-2">{appointment.date}</td>
@@ -146,12 +142,13 @@ const DoctorDashboard = () => {
                           </span>
                         </td>
                         <td className="px-4 py-2">
-                          <button
-                            onClick={() => handleStatusChange(appointmentData.id, "Accepted")}
-                            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 mr-2"
-                          >
-                            Accept app
-                          </button>
+                        <button
+  onClick={() => handleStatusChange(appointment.id)} // Correct the ID
+  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 mr-2"
+>
+  Accept
+</button>
+
                           <button
                             onClick={() => handleStatusChange(appointment.id, "Rejected")}
                             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"

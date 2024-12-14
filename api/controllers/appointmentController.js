@@ -99,11 +99,21 @@ const bookappointment = async (req, res) => {
 
 const completed = async (req, res) => {
   try {
-    const { appointmentId } = req.body;
+    const { id } = req.body;
+
+    if (!id) {
+      console.error("Error: Missing id in request body");
+      return res.status(400).send("Missing id in request body");
+    }
+
     const doctorId = req.user.id; // Extract doctorId from the middleware
 
+    console.log("Request Body:", req.body);
+    console.log("Requesting Doctor ID:", doctorId);
+
     // Find the appointment by ID
-    const appointment = await Appointment.findByPk(appointmentId);
+    const appointment = await Appointment.findByPk(id);
+    console.log("Fetched Appointment:", appointment);
 
     if (!appointment) {
       return res.status(404).send("Appointment not found");
@@ -117,14 +127,22 @@ const completed = async (req, res) => {
     }
 
     // Update the appointment status to "Completed"
-    await appointment.update({ status: "Completed" });
-
-    return res.status(200).send("Appointment status updated to Completed");
+    try {
+      await appointment.update({ status: "Accept" });
+      return res.status(200).json({
+        message: "Appointment status updated to Completed",
+        appointment,
+      });
+    } catch (updateError) {
+      console.error("Error updating appointment:", updateError);
+      return res.status(500).send("Error updating appointment status");
+    }
   } catch (error) {
     console.error("Error completing appointment:", error);
     res.status(500).send("Unable to complete appointment");
   }
 };
+
 
 
 module.exports = {

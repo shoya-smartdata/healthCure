@@ -112,23 +112,27 @@ export const getAppointments = async (searchKeyword = "") => {
 
 
 
-export const acceptAppointment = async (id)=>{
+export const acceptAppointment = async (id) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token"); // Retrieve token
     if (!token) {
-      throw new Error('Authorization token is missing');
+      throw new Error("Authorization token is missing");
     }
-  const response = await axios.put(
-    `${API_BASE_URL}/api/appointment/completed`,
-    { id },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`, 
-      },
-    }
-  );
-  return response.data;
+
+    const response = await axios.put(
+      `${API_BASE_URL}/api/appointment/completed`, // Endpoint URL
+      { id }, // Payload with id
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token
+          "Content-Type": "application/json", // Ensure the request has the correct content type
+        },
+      }
+    );
+    console.log("Response:", response.data);
+    return response.data.appointment; // Return the updated appointment
   } catch (error) {
-    throw error.response?.data?.message || "Unable to accept appointment request!";
+    console.error("Error completing appointment:", error);
+    throw error; // Rethrow the error to handle it in the component
   }
-}
+};

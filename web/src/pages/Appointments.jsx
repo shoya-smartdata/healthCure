@@ -87,14 +87,14 @@ const Appointments = () => {
                   onClick={() => handleChatClick(appointment)}
                   className={`px-4 py-2 rounded-lg w-full sm:w-auto transition duration-300 ${
                     appointment.status === "complete" ||
-                    appointment.status === "accept"
+                    appointment.status === "Accept"
                       ? "bg-indigo-600 text-white hover:bg-indigo-700"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                   disabled={
                     !(
                       appointment.status === "complete" ||
-                      appointment.status === "accept"
+                      appointment.status === "Accept"
                     )
                   }
                 >
